@@ -167,6 +167,9 @@ class Vector(Matrix):
     def empty(self, m: int, n: int = 1):
         super().empty(m, n)
 
+    def __len__(self):
+        return len(self.entries)
+
     def __abs__(self):
         return sqrt(sum(i[0]**2 for i in self.entries))
 
@@ -568,26 +571,47 @@ def test_trace():
     assert trace(Matrix([[1]])) == 1
 
 
+# def determinant(matrix) -> float:
+#     '''
+#     Description:
+#         calculates the determinat of the (n x n) matrix using laplace
+#         recursive formula.
+#     Args:
+#         matrix - of which determinante should be calculated
+#     Returns:
+#         determinate of the matrix
+#     Examples:
+#         >>> determinant(Matrix([[1,2,3],[4,5,6],[7,8,9]]))
+#         0
+#     '''
+#     assert matrix.n == matrix.m, "matrix is not quadratic"
+#     if matrix.n == 1:
+#         return matrix[0, 0]
+#     else:
+#         det = 0
+#         for i, entry in enumerate(matrix.col(0)):
+#             det += (-1)**i * entry * determinant(minor(matrix, i, 0))
+#         return det
+
+
 def determinant(matrix) -> float:
     '''
     Description:
-        calculates the determinat of the (n x n) matrix
+        Calculates the determinant of matrix using gaussian elimination.
     Args:
         matrix - of which determinante should be calculated
     Returns:
-        determinate of the matrix
+        determinant of the matrix
     Examples:
-        >>> determinant(Matrix([[1,2,3],[4,5,6],[7,8,9]]))
+        >>> det(Matrix([[1,2,3],[4,5,6],[7,8,9]]))
         0
     '''
     assert matrix.n == matrix.m, "matrix is not quadratic"
-    if matrix.n == 1:
-        return matrix[0, 0]
-    else:
-        det = 0
-        for i, entry in enumerate(matrix.col(0)):
-            det += (-1)**i * entry * determinant(minor(matrix, i, 0))
-        return det
+    matrix = triangular(matrix)
+    det = 1
+    for i in range(matrix.n):
+        det *= matrix[i, i]
+    return round(det, 7)
 
 
 def test_determinant():
@@ -716,11 +740,35 @@ def test_triangular():
     )
 
 
-def LGS(A, b):
+def gaussian_elimination(A, b):
+    '''
+    Description:
+        Returns the linear system of eqations in triangular form
+    '''
     rows = []
     for i in range(A.m):
         rows.append(A[-1, i] + [b[i]])
     return triangular(Matrix(rows))
+
+
+def cramers_rule(A, b):
+    '''
+    Description:
+        Applied Cramers Rule on a linear system of equations.
+    Args:
+        A - Matrix
+        b - Vector
+    Returns:
+        Returns the Vector that satisfies Ax = b
+    '''
+    det = determinant(A)
+    assert det != 0, "unambiguous"
+    solution = []
+    for i in range(len(b)):
+        C = _copy(A)
+        C[i] = list(b)
+        solution.append(determinant(C) / det)
+    return Vector(solution)
 
 
 def inverse(matrix):
@@ -781,7 +829,7 @@ def diagonalize(matrix):
 
 
 if __name__ == '__main__':
-    mat = Matrix([[3, 2, 3],
+    mat = Matrix([[1, 2, 3],
                   [4, 5, 6],
                   [7, 8, 9]])
     mat2 = Matrix([[-1, -2, -3],
@@ -806,4 +854,7 @@ if __name__ == '__main__':
         [16, -2, 4.3]
     ])
     vec1 = Vector(5.3, -1, 3.45)
-    vec2 = Vector(2, 1)
+    vec2 = Vector(2, 1, 3)
+
+    print(determinant(mat3))
+    print(det_fast(mat3))

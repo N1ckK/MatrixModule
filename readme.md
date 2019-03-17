@@ -27,7 +27,8 @@ Matrices are stored in two dimensional lists.
     - `matrix.minor`
     - `matrix.transpose`
     - `matrix.triangular`
-    - `matrix.LGS`
+    - `matrix.gaussian_elimination`
+    - `matrix.cramers_rule`
     - `matrix.inverse`
     - `matrix.rank`
     - `matrix.eigenvalues`
@@ -282,6 +283,24 @@ def empty(self, n)
 ------------------------------------------------------------------------------
 
 ~~~~
+def __len__(self)
+~~~~
+Returns the dimension of the vector.
+
+Example:
+$$
+\begin{bmatrix}
+    a_{1} \\
+    a_{2} \\
+    ... \\
+    a_{n}
+\end{bmatrix}
+$$
+will yield $n$.
+
+------------------------------------------------------------------------------
+
+~~~~
 def __abs__(self)
 ~~~~
 Returns returns the length of the Vector.
@@ -496,11 +515,23 @@ Brings the matrix into triangular form and returns it
 
 ------------------------------------------------------------------------------
 
-#### matrix.LGS
+#### matrix.gaussian_elimination
 
 ~~~~
-def LGS(A, b)
+def gaussian_elimination(A, b)
 ~~~~
+When applied, the function will return $Ax=b$ in triangular form.
+
+------------------------------------------------------------------------------
+
+#### matrix.cramers_rule
+
+~~~~
+def cramers_rule(A, b)
+~~~~
+When applied, the function will return the Vector that satisfies $Ax=b$. The
+Vector $x$ has to be unambiguous. This is the case if the determinant of $A$
+is not $0$, otherwise an *AsssertionError* will be raised.
 
 ------------------------------------------------------------------------------
 
